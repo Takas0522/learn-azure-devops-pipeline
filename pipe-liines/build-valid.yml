@@ -23,10 +23,10 @@ steps:
     testResultsFormat: 'JUnit'
     testResultsFiles: '**/test-results.xml'
 - task: PublishCodeCoverageResults@1
-    inputs:
-      codeCoverageTool: 'Cobertura'
-      summaryFileLocation: '**/cobertura-coverage.xml',
-      reportDirectory: '**/coverage/SamplePublishApp'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '**/cobertura-coverage.xml',
+    reportDirectory: '**/coverage/SamplePublishApp'
 - task: Npm@1
   inputs:
     command: 'custom'
