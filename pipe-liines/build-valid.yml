@@ -3,26 +3,26 @@ pr:
     - develop
     - release/*
 
-    pool:
-      vmImage: 'ubuntu-latest'
+pool:
+  vmImage: 'ubuntu-latest'
 
-    steps:
-    - task: Npm@1
-      inputs:
-        command: 'ci'
-    - task: Npm@1
-      inputs:
-        command: 'custom'
-        customCommand: 'run lint'
-    - task: Npm@1
-      inputs:
-        command: 'custom'
-        customCommand: 'run test:ci'
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/test-results.xml'
-    - task: Npm@1
-      inputs:
-        command: 'custom'
-        customCommand: 'run test:prod'
+steps:
+- task: Npm@1
+  inputs:
+    command: 'ci'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run lint'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run test:ci'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run test:prod'
