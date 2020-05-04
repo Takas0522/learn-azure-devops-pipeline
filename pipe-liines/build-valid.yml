@@ -25,9 +25,14 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: 'Cobertura'
+<<<<<<< HEAD
     summaryFileLocation: '**/cobertura-coverage.xml',
+=======
+    summaryFileLocation: '**/cobertura-coverage.xml'
+>>>>>>> 42f85dde06b64fee2fd4fa60d078fa20bd675782
     reportDirectory: '**/coverage/SamplePublishApp'
 - task: Npm@1
   inputs:
     command: 'custom'
     customCommand: 'run build:prod'
+
