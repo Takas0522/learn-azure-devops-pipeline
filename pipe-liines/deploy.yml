@@ -64,7 +64,7 @@ stages:
               azureSubscription: 'pipeline-test'
               appType: 'webApp'
               WebAppName: 'takas-staging-env'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/**/staging.zip'
+              packageForLinux: '$(Build.ArtifactStagingDirectory)/staging.zip'
   - stage: prod_deploy
     dependsOn: staging_deploy
     condition: succeeded()
@@ -81,4 +81,4 @@ stages:
               azureSubscription: 'pipeline-test'
               appType: 'webApp'
               WebAppName: 'takas-release-env'
-              packageForLinux: '$(System.DefaultWorkingDirectory)/**/production.zip'
+              packageForLinux: '$(Build.ArtifactStagingDirectory)/prod.zip'
