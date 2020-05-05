@@ -1,18 +1,68 @@
 trigger:
-    tags:
-        include: - ver*
-    branches:
-        include: - master
+  tags:
+    include:
+    - ver*
+  branches:
+    include:
+    - master
+
 stages:
-    stage: build
-    steps:
-        - task: Npm@1
+  - stage: build
+    jobs:
+    - job:
+      steps:
+      - task: Npm@1
         inputs:
-            command: 'ci'
-        - task: Npm@1
+          command: 'ci'
+      - task: Npm@1
         inputs:
-            command: 'custom'
-            customCommand: 'run build:staging'
+          command: 'custom'
+          customCommand: 'run build:staging'
+      - task: PublishBuildArtifacts@1
         inputs:
-            command: 'custom'
-            customCommand: 'run build:prod'
+          PathtoPublish: 'dist/staging'
+          ArtifactName: 'staging'
+          publishLocation: 'Container'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build:prod'
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'dist/prod'
+          ArtifactName: 'prod'
+          publishLocation: 'Container'
+
+
+  - stage: staging_deploy
+    dependsOn: build
+    condition: succeeded()
+    jobs:
+    - deployment: webapp_deploy_staging
+      strategy:
+       runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'pipeline-test'
+              appType: 'webApp'
+              WebAppName: 'takas-staging-env'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/staging.zip'
+  - stage: prod_deploy
+    dependsOn: staging_deploy
+    condition: succeeded()
+    jobs:
+    - deployment: webapp_deploy_prod
+      strategy:
+       runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'pipeline-test'
+              appType: 'webApp'
+              WebAppName: 'takas-release-env'
+              packageForLinux: '$(System.DefaultWorkingDirectory)/**/production.zip'
