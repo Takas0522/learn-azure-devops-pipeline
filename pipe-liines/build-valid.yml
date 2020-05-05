@@ -1,0 +1,33 @@
+pr:
+    - master
+    - develop
+    - release/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Npm@1
+  inputs:
+    command: 'ci'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run lint'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run test:ci'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml'
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '**/cobertura-coverage.xml'
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run build:prod'
+
