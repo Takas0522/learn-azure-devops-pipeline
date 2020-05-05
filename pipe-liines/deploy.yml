@@ -1,10 +1,7 @@
 trigger:
-  tags:
-    include:
-    - ver*
   branches:
     include:
-    - master
+    - refs/tags/*
 
 stages:
   - stage: build
