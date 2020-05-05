@@ -1,0 +1,18 @@
+trigger:
+    tags:
+        include: - ver*
+    branches:
+        include: - master
+stages:
+    stage: build
+    steps:
+        - task: Npm@1
+        inputs:
+            command: 'ci'
+        - task: Npm@1
+        inputs:
+            command: 'custom'
+            customCommand: 'run build:staging'
+        inputs:
+            command: 'custom'
+            customCommand: 'run build:prod'
