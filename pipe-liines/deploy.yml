@@ -39,6 +39,7 @@ stages:
     condition: succeeded()
     jobs:
     - deployment: webapp_deploy_staging
+      environment: webapp_deploy_staging
       strategy:
        runOnce:
         deploy:
@@ -55,6 +56,7 @@ stages:
     condition: succeeded()
     jobs:
     - deployment: webapp_deploy_prod
+      environment: webapp_deploy_prod
       strategy:
        runOnce:
         deploy:
