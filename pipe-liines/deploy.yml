@@ -43,7 +43,7 @@ stages:
           publishLocation: 'container'
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: '$(Build.ArtifactStagingDirectory)/dist'
+          targetPath: '$(Build.ArtifactStagingDirectory)/drop'
           publishLocation: 'pipeline'
 
   - stage: staging_deploy
@@ -62,7 +62,7 @@ stages:
               azureSubscription: 'pipeline-test'
               appType: 'webApp'
               WebAppName: 'takas-staging-env'
-              packageForLinux: '$(Build.ArtifactStagingDirectory)/drop/staging.zip'
+              packageForLinux: '$(Pipeline.Workspace)/drop/staging.zip'
   - stage: prod_deploy
     dependsOn: staging_deploy
     condition: succeeded()
