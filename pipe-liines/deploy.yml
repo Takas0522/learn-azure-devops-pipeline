@@ -1,0 +1,78 @@
+trigger:
+  tags:
+    include:
+    - ver*
+  branches:
+    include:
+    - master
+
+stages:
+  - stage: build
+    jobs:
+    - job:
+      steps:
+      - task: Npm@1
+        inputs:
+          command: 'ci'
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build:staging'
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: 'dist/staging'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/staging.zip'
+          replaceExistingArchive: true
+      - task: Npm@1
+        inputs:
+          command: 'custom'
+          customCommand: 'run build:prod'
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: 'dist/prod'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/prod.zip'
+          replaceExistingArchive: true
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'drop'
+          publishLocation: 'container'
+
+  - stage: staging_deploy
+    dependsOn: build
+    condition: succeeded()
+    jobs:
+    - deployment: webapp_deploy_staging
+      environment: webapp_deploy_staging
+      strategy:
+       runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'pipeline-test'
+              appType: 'webApp'
+              WebAppName: 'takas-staging-env'
+              packageForLinux: '$(Agent.BuildDirectory)/drop/staging.zip'
+  - stage: prod_deploy
+    dependsOn: staging_deploy
+    condition: succeeded()
+    jobs:
+    - deployment: webapp_deploy_prod
+      environment: webapp_deploy_prod
+      strategy:
+       runOnce:
+        deploy:
+          steps:
+          - task: AzureRmWebAppDeployment@4
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: 'pipeline-test'
+              appType: 'webApp'
+              WebAppName: 'takas-release-env'
+              packageForLinux: '$(Agent.BuildDirectory)/drop/prod.zip'
