@@ -40,11 +40,8 @@ stages:
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'drop'
-          publishLocation: 'container'
-
-      - publish: publish
-        displayName: Publish Artifact
-        artifact: drop
+          publishLocation: 'filepath'
+          targetPath: '$(Build.ArtifactStagingDirectory)'
 
   - stage: staging_deploy
     dependsOn: build
