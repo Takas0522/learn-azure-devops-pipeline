@@ -29,7 +29,7 @@ stages:
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'staging.zip'
-          publishLocation: 'FilePath'
+          publishLocation: 'filePath'
       - task: Npm@1
         inputs:
           command: 'custom'
@@ -45,7 +45,7 @@ stages:
         inputs:
           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
           ArtifactName: 'prod.zip'
-          publishLocation: 'FilePath'
+          publishLocation: 'filePath'
 
 
   - stage: staging_deploy
